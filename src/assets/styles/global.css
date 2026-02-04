@@ -1,0 +1,7 @@
+@layer normalize, base, components;
+
+@import "modern-normalize/modern-normalize.css" layer(normalize);
+@import "./theme.css" layer(base);
+
+@layer base {
+}
