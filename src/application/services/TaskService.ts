@@ -76,7 +76,6 @@ export class TaskService extends ITaskService {
     if (!board.tasks[taskId])
       throw new Error(`TaskNotFoundError: Task not found: ${taskId}`);
 
-    // Remove from current column
     for (const col of board.columns) {
       const idx = col.taskIds.indexOf(taskId);
 
@@ -86,7 +85,6 @@ export class TaskService extends ITaskService {
       }
     }
 
-    // Add to target column
     const targetCol = board.columns.find((c) => c.id === toColumnId);
 
     if (!targetCol)
@@ -137,14 +135,11 @@ export class TaskService extends ITaskService {
 
     const idSet = new Set(taskIds);
 
-    // Remove from all columns
     for (const col of board.columns) {
       col.taskIds = col.taskIds.filter((id) => !idSet.has(id));
     }
 
-    // Add to target
     targetCol.taskIds.push(...taskIds);
-
     this.boardStore.set(board);
   }
 }
