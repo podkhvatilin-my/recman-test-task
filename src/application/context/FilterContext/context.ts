@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
-import type { TaskStatus } from "../../../model/task";
+import type { FilterValue } from "../../../interface/IFilterService";
 
-export type FilterValue = TaskStatus | "all";
+export type { FilterValue };
 
 interface IFilterContextValue {
   filter: FilterValue;

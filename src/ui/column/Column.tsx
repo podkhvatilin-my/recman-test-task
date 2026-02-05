@@ -21,7 +21,7 @@ interface ColumnProps {
 }
 
 export function Column({ columnId, columnIndex, isMobile }: ColumnProps) {
-  const { board } = useBoard();
+  const { board, searchService, filterService } = useBoard();
   const { deferredQuery } = useSearch();
   const { filter } = useFilter();
 
@@ -36,23 +36,11 @@ export function Column({ columnId, columnIndex, isMobile }: ColumnProps) {
   const column = board.columns.find((c) => c.id === columnId);
 
   const visibleTaskIds = useMemo(() => {
-    if (!column) return [];
+    const taskIds = column?.taskIds ?? [];
+    const filtered = filterService.filter(taskIds, filter);
 
-    return column.taskIds.filter((taskId) => {
-      const task = board.tasks[taskId];
-      if (!task) return false;
-
-      if (filter !== "all" && task.status !== filter) return false;
-
-      if (deferredQuery.trim()) {
-        const lowerText = task.text.toLowerCase();
-        const lowerQuery = deferredQuery.toLowerCase();
-        if (!lowerText.includes(lowerQuery)) return false;
-      }
-
-      return true;
-    });
-  }, [column, board.tasks, filter, deferredQuery]);
+    return searchService.search(filtered, deferredQuery);
+  }, [column, filterService, searchService, deferredQuery, filter]);
 
   const taskVirtualizer = useVirtualizer({
     count: visibleTaskIds.length,
