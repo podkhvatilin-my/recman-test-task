@@ -10,6 +10,8 @@
   gap: 8px;
   min-height: 44px;
   position: relative;
+  border-top: 2px solid transparent;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
 .taskCard:hover {
@@ -56,7 +58,14 @@
 }
 
 .dragging {
-  opacity: 0.5;
+  opacity: 0.4;
+  transform: scale(0.97);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.draggedOver {
+  border-top: 2px solid #0079bf;
+  margin-top: -2px;
 }
 
 .dialog {

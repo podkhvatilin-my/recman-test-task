@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import clsx from "clsx";
 import { DnDItemType } from "../../infrastructure/dnd";
 import { useBoard } from "../../application/hooks/useBoard";
 import { useSearch } from "../../application/hooks/useSearch";
@@ -18,33 +22,15 @@ export function TaskCard({ taskId, columnId, index }: TaskCardProps) {
   const { board, taskService } = useBoard();
   const { deferredQuery } = useSearch();
   const { isSelected, toggle, count } = useSelection();
-  const task = board.tasks[taskId];
+
   const draggableRef = useRef<HTMLDivElement>(null);
+
   const [isDragging, setIsDragging] = useState(false);
+  const [isDraggedOver, setIsDraggedOver] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
-  useEffect(() => {
-    const el = draggableRef.current;
-    if (!el) return;
-
-    return draggable({
-      element: el,
-      getInitialData: () => ({ type: DnDItemType.TASK, taskId: task.id, fromColumnId: columnId }),
-      onDragStart: () => setIsDragging(true),
-      onDrop: () => setIsDragging(false),
-    });
-  }, [task?.id, columnId]);
-
-  useEffect(() => {
-    const el = draggableRef.current;
-    if (!el) return;
-
-    return dropTargetForElements({
-      element: el,
-      getData: () => ({ type: DnDItemType.TASK, columnId, index }),
-      canDrop: ({ source }) => source.data.type === DnDItemType.TASK && source.data.taskId !== taskId,
-    });
-  }, [taskId, columnId, index]);
+  const task = board.tasks[taskId];
+  const selected = isSelected(taskId);
 
   const handleToggle = useCallback(() => {
     taskService.toggleStatus(taskId);
@@ -62,17 +48,52 @@ export function TaskCard({ taskId, columnId, index }: TaskCardProps) {
     setEditOpen(false);
   }, []);
 
+  useEffect(() => {
+    const el = draggableRef.current;
+
+    if (!el) return;
+
+    return draggable({
+      element: el,
+      getInitialData: () => ({
+        type: DnDItemType.TASK,
+        taskId: task.id,
+        fromColumnId: columnId,
+      }),
+      onDragStart: () => setIsDragging(true),
+      onDrop: () => setIsDragging(false),
+    });
+  }, [task?.id, columnId]);
+
+  useEffect(() => {
+    const el = draggableRef.current;
+
+    if (!el) return;
+
+    return dropTargetForElements({
+      element: el,
+      getData: () => ({ type: DnDItemType.TASK, columnId, index }),
+      canDrop: ({ source }) =>
+        source.data.type === DnDItemType.TASK && source.data.taskId !== taskId,
+      onDragEnter: () => setIsDraggedOver(true),
+      onDragLeave: () => setIsDraggedOver(false),
+      onDrop: () => setIsDraggedOver(false),
+    });
+  }, [taskId, columnId, index]);
+
   if (!task) return null;
-
-  const selected = isSelected(taskId);
-
-  let className = styles.taskCard;
-  if (task.status === "completed") className += ` ${styles.completed}`;
-  if (isDragging) className += ` ${styles.dragging}`;
 
   return (
     <>
-      <div ref={draggableRef} className={className} onClick={handleOpenEdit}>
+      <div
+        ref={draggableRef}
+        className={clsx(styles.taskCard, {
+          [styles.completed]: task.status === "completed",
+          [styles.dragging]: isDragging,
+          [styles.draggedOver]: isDraggedOver,
+        })}
+        onClick={handleOpenEdit}
+      >
         <input
           type="checkbox"
           checked={task.status === "completed"}
@@ -89,7 +110,9 @@ export function TaskCard({ taskId, columnId, index }: TaskCardProps) {
           checked={selected}
           onChange={handleBulkSelect}
           onClick={(e) => e.stopPropagation()}
-          className={`${styles.bulkCheckbox} ${selected || count > 0 ? styles.bulkCheckboxVisible : ""}`}
+          className={clsx(styles.bulkCheckbox, {
+            [styles.bulkCheckboxVisible]: selected || count > 0,
+          })}
           aria-label={`Select "${task.text}" for bulk action`}
         />
       </div>

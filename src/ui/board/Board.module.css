@@ -1,24 +1,24 @@
 .board {
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  flex: 1;
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
 }
 
 .boardMobile {
-  display: none;
+    display: none;
 }
 
 @media (max-width: 639px) {
-  .board {
-    display: none;
-  }
-  .boardMobile {
-    display: block;
-    padding: 16px;
-    overflow-y: auto;
-    flex: 1;
-  }
+    .board {
+        display: none;
+    }
+    .boardMobile {
+        display: block;
+        padding: 16px;
+        overflow-y: auto;
+        flex: 1;
+    }
 }

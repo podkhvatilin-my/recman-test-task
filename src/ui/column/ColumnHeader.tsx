@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useBoard } from "../../application/hooks/useBoard";
 import { useSelection } from "../../application/hooks/useSelection";
 import { ColumnNameDialog } from "./ColumnNameDialog";
@@ -6,27 +12,18 @@ import styles from "./Column.module.css";
 
 interface ColumnHeaderProps {
   columnId: string;
+  dragHandleRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function ColumnHeader({ columnId }: ColumnHeaderProps) {
+export function ColumnHeader({ columnId, dragHandleRef }: ColumnHeaderProps) {
   const { board, columnService } = useBoard();
   const { selectAll } = useSelection();
+
   const detailsRef = useRef<HTMLDetailsElement>(null);
+
   const [renameOpen, setRenameOpen] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const details = detailsRef.current;
-      if (details?.open && !details.contains(e.target as Node)) {
-        details.removeAttribute("open");
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
-
   const column = board.columns.find((c) => c.id === columnId);
-  if (!column) return null;
 
   const handleRename = () => {
     setRenameOpen(true);
@@ -35,11 +32,13 @@ export function ColumnHeader({ columnId }: ColumnHeaderProps) {
 
   const handleRenameSubmit = useCallback(
     (newTitle: string) => {
-      if (newTitle !== column.title) {
+      if (!column) return;
+
+      if (newTitle !== column?.title) {
         columnService.renameColumn(columnId, newTitle);
       }
     },
-    [columnService, columnId, column.title],
+    [columnService, columnId, column],
   );
 
   const handleRenameClose = useCallback(() => {
@@ -47,6 +46,8 @@ export function ColumnHeader({ columnId }: ColumnHeaderProps) {
   }, []);
 
   const handleSelectAll = () => {
+    if (!column) return;
+
     selectAll(column.taskIds);
     detailsRef.current?.removeAttribute("open");
   };
@@ -56,9 +57,25 @@ export function ColumnHeader({ columnId }: ColumnHeaderProps) {
     detailsRef.current?.removeAttribute("open");
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const details = detailsRef.current;
+
+      if (details?.open && !details.contains(e.target as Node)) {
+        details.removeAttribute("open");
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  if (!column) return null;
+
   return (
     <>
-      <header className={styles.columnHeader}>
+      <header ref={dragHandleRef} className={styles.columnHeader}>
         <h2 className={styles.title}>{column.title}</h2>
         <details ref={detailsRef} className={styles.menu}>
           <summary className={styles.menuTrigger}>&#x22EF;</summary>

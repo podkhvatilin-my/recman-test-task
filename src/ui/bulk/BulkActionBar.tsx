@@ -1,4 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
+import { type SubmitEvent, useRef, useState } from "react";
 import { useBoard } from "../../application/hooks/useBoard";
 import { useSelection } from "../../application/hooks/useSelection";
 import { TaskStatus } from "../../model/task";
@@ -7,7 +7,9 @@ import styles from "./BulkActionBar.module.css";
 export function BulkActionBar() {
   const { board, taskService } = useBoard();
   const { selectedIds, clear, count } = useSelection();
+
   const moveDialogRef = useRef<HTMLDialogElement>(null);
+
   const [targetColumnId, setTargetColumnId] = useState("");
 
   const ids = Array.from(selectedIds);
@@ -27,8 +29,9 @@ export function BulkActionBar() {
     clear();
   };
 
-  const handleMove = (e: FormEvent) => {
+  const handleMove = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (targetColumnId) {
       taskService.bulkMove(ids, targetColumnId);
       clear();

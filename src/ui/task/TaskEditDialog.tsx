@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import { useBoard } from "../../application/hooks/useBoard";
 import { TaskStatus } from "../../model/task";
 import styles from "./TaskCard.module.css";
@@ -10,13 +10,49 @@ interface TaskEditDialogProps {
   onClose: () => void;
 }
 
-export function TaskEditDialog({ taskId, columnId, open, onClose }: TaskEditDialogProps) {
+export function TaskEditDialog({
+  taskId,
+  columnId,
+  open,
+  onClose,
+}: TaskEditDialogProps) {
   const { board, taskService } = useBoard();
-  const task = board.tasks[taskId];
+
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const task = board.tasks[taskId];
+
   const [text, setText] = useState(task?.text ?? "");
-  const [status, setStatus] = useState<string>(task?.status ?? TaskStatus.ACTIVE);
+  const [status, setStatus] = useState<string>(
+    task?.status ?? TaskStatus.ACTIVE,
+  );
   const [moveTarget, setMoveTarget] = useState("");
+
+  const handleSave = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const trimmed = text.trim();
+
+    if (trimmed) {
+      taskService.updateTask(taskId, trimmed);
+    }
+
+    if (status !== task.status) {
+      taskService.toggleStatus(taskId);
+    }
+
+    if (moveTarget && moveTarget !== columnId) {
+      taskService.moveTask(taskId, moveTarget);
+    }
+
+    setMoveTarget("");
+    onClose();
+  };
+
+  const handleDelete = () => {
+    taskService.removeTask(taskId);
+    onClose();
+  };
 
   useEffect(() => {
     if (task) {
@@ -27,6 +63,7 @@ export function TaskEditDialog({ taskId, columnId, open, onClose }: TaskEditDial
 
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (!dialog) return;
 
     if (open) {
@@ -38,35 +75,17 @@ export function TaskEditDialog({ taskId, columnId, open, onClose }: TaskEditDial
 
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (!dialog) return;
 
     const handleClose = () => onClose();
+
     dialog.addEventListener("close", handleClose);
+
     return () => dialog.removeEventListener("close", handleClose);
   }, [onClose]);
 
   if (!task) return null;
-
-  const handleSave = (e: FormEvent) => {
-    e.preventDefault();
-    const trimmed = text.trim();
-    if (trimmed) {
-      taskService.updateTask(taskId, trimmed);
-    }
-    if (status !== task.status) {
-      taskService.toggleStatus(taskId);
-    }
-    if (moveTarget && moveTarget !== columnId) {
-      taskService.moveTask(taskId, moveTarget);
-    }
-    setMoveTarget("");
-    onClose();
-  };
-
-  const handleDelete = () => {
-    taskService.removeTask(taskId);
-    onClose();
-  };
 
   return (
     <dialog ref={dialogRef} className={styles.dialog}>

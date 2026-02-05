@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import styles from "./Column.module.css";
 
 interface ColumnNameDialogProps {
@@ -9,9 +9,25 @@ interface ColumnNameDialogProps {
   defaultValue?: string;
 }
 
-export function ColumnNameDialog({ open, onClose, onSubmit, title, defaultValue = "" }: ColumnNameDialogProps) {
+export function ColumnNameDialog({
+  open,
+  onClose,
+  onSubmit,
+  title,
+  defaultValue = "",
+}: ColumnNameDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+
   const [name, setName] = useState(defaultValue);
+
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (trimmed) {
+      onSubmit(trimmed);
+    }
+    onClose();
+  };
 
   useEffect(() => {
     setName(defaultValue);
@@ -19,6 +35,7 @@ export function ColumnNameDialog({ open, onClose, onSubmit, title, defaultValue 
 
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (!dialog) return;
 
     if (open) {
@@ -30,21 +47,15 @@ export function ColumnNameDialog({ open, onClose, onSubmit, title, defaultValue 
 
   useEffect(() => {
     const dialog = dialogRef.current;
+
     if (!dialog) return;
 
     const handleClose = () => onClose();
+
     dialog.addEventListener("close", handleClose);
+
     return () => dialog.removeEventListener("close", handleClose);
   }, [onClose]);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const trimmed = name.trim();
-    if (trimmed) {
-      onSubmit(trimmed);
-    }
-    onClose();
-  };
 
   return (
     <dialog ref={dialogRef} className={styles.columnDialog}>
@@ -64,7 +75,11 @@ export function ColumnNameDialog({ open, onClose, onSubmit, title, defaultValue 
           <button type="submit" className={styles.columnDialogSubmit}>
             Save
           </button>
-          <button type="button" onClick={onClose} className={styles.columnDialogCancel}>
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.columnDialogCancel}
+          >
             Cancel
           </button>
         </div>

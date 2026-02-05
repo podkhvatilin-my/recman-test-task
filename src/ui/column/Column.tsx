@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import clsx from "clsx";
 import { DnDItemType } from "../../infrastructure/dnd";
 import { useBoard } from "../../application/hooks/useBoard";
 import { useSearch } from "../../application/hooks/useSearch";
@@ -12,15 +16,22 @@ import styles from "./Column.module.css";
 
 interface ColumnProps {
   columnId: string;
+  columnIndex?: number;
   isMobile?: boolean;
 }
 
-export function Column({ columnId, isMobile }: ColumnProps) {
+export function Column({ columnId, columnIndex, isMobile }: ColumnProps) {
   const { board } = useBoard();
   const { deferredQuery } = useSearch();
   const { filter } = useFilter();
+
   const taskScrollRef = useRef<HTMLDivElement>(null);
   const columnRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [isTaskDragOver, setIsTaskDragOver] = useState(false);
+  const [isColumnDragOver, setIsColumnDragOver] = useState(false);
 
   const column = board.columns.find((c) => c.id === columnId);
 
@@ -50,26 +61,75 @@ export function Column({ columnId, isMobile }: ColumnProps) {
     overscan: 5,
   });
 
+  // Column as drop target for both tasks and columns
   useEffect(() => {
     const el = columnRef.current;
     if (!el) return;
 
     return dropTargetForElements({
       element: el,
-      getData: () => ({ type: DnDItemType.TASK, columnId }),
-      canDrop: ({ source }) => source.data.type === DnDItemType.TASK,
+      getData: ({ source }) => {
+        if (source.data.type === DnDItemType.COLUMN) {
+          return { type: DnDItemType.COLUMN, columnId, columnIndex };
+        }
+        return { type: DnDItemType.TASK, columnId };
+      },
+      canDrop: ({ source }) => {
+        if (source.data.type === DnDItemType.TASK) return true;
+        if (source.data.type === DnDItemType.COLUMN)
+          return source.data.columnId !== columnId;
+        return false;
+      },
+      onDragEnter: ({ source }) => {
+        if (source.data.type === DnDItemType.TASK) setIsTaskDragOver(true);
+        else if (source.data.type === DnDItemType.COLUMN)
+          setIsColumnDragOver(true);
+      },
+      onDragLeave: ({ source }) => {
+        if (source.data.type === DnDItemType.TASK) setIsTaskDragOver(false);
+        else if (source.data.type === DnDItemType.COLUMN)
+          setIsColumnDragOver(false);
+      },
+      onDrop: ({ source }) => {
+        if (source.data.type === DnDItemType.TASK) setIsTaskDragOver(false);
+        else if (source.data.type === DnDItemType.COLUMN)
+          setIsColumnDragOver(false);
+      },
     });
-  }, [columnId]);
+  }, [columnId, columnIndex]);
+
+  // Column as draggable (drag handle = header)
+  useEffect(() => {
+    const el = columnRef.current;
+    const handle = headerRef.current;
+
+    if (!el || !handle || columnIndex === undefined) return;
+
+    return draggable({
+      element: el,
+      dragHandle: handle,
+      getInitialData: () => ({ type: DnDItemType.COLUMN, columnId }),
+      onDragStart: () => setIsDragging(true),
+      onDrop: () => setIsDragging(false),
+    });
+  }, [columnId, columnIndex]);
 
   if (!column) return null;
 
-  const useVirtual = !isMobile && visibleTaskIds.length > 20;
+  const isVirtualized = !isMobile && visibleTaskIds.length > 20;
 
   return (
-    <div ref={columnRef} className={styles.column}>
-      <ColumnHeader columnId={columnId} />
+    <div
+      ref={columnRef}
+      className={clsx(styles.column, {
+        [styles.columnDragging]: isDragging,
+        [styles.taskDragOver]: isTaskDragOver,
+        [styles.columnDragOver]: isColumnDragOver,
+      })}
+    >
+      <ColumnHeader columnId={columnId} dragHandleRef={headerRef} />
       <div ref={taskScrollRef} className={styles.taskList}>
-        {useVirtual ? (
+        {isVirtualized ? (
           <div
             style={{
               height: `${taskVirtualizer.getTotalSize()}px`,
@@ -98,7 +158,12 @@ export function Column({ columnId, isMobile }: ColumnProps) {
           </div>
         ) : (
           visibleTaskIds.map((taskId, idx) => (
-            <TaskCard key={taskId} taskId={taskId} columnId={columnId} index={idx} />
+            <TaskCard
+              key={taskId}
+              taskId={taskId}
+              columnId={columnId}
+              index={idx}
+            />
           ))
         )}
       </div>

@@ -18,6 +18,7 @@ export function Toolbar() {
   const { query, setQuery } = useSearch();
   const { filter, setFilter } = useFilter();
   const { activeColumnId, setActiveColumnId } = useActiveColumn();
+
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
   const handleAddColumnSubmit = useCallback(
@@ -44,7 +45,16 @@ export function Toolbar() {
         />
 
         <fieldset className={styles.filterGroup}>
-          <legend className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}>
+          <legend
+            className="sr-only"
+            style={{
+              position: "absolute",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+              clip: "rect(0,0,0,0)",
+            }}
+          >
             Filter tasks
           </legend>
           {FILTERS.map((f) => (
@@ -65,7 +75,10 @@ export function Toolbar() {
           ))}
         </fieldset>
 
-        <button onClick={() => setAddColumnOpen(true)} className={styles.addColumnBtn}>
+        <button
+          onClick={() => setAddColumnOpen(true)}
+          className={styles.addColumnBtn}
+        >
           + Add Column
         </button>
 
