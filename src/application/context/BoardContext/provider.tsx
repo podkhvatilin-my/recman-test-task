@@ -1,5 +1,6 @@
-import { type ReactNode, useMemo, useState, useSyncExternalStore } from "react";
+import { type ReactNode, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { BoardRepository } from "../../../infrastructure/persistence/BoardRepository";
+import { setupDnDMonitor } from "../../../infrastructure/dnd";
 import { TaskService } from "../../services/TaskService";
 import { ColumnService } from "../../services/ColumnService";
 import { BoardStore } from "../../store/BoardStore";
@@ -14,6 +15,10 @@ export function BoardContextProvider({ children }: { children: ReactNode }) {
   );
   const taskService = useMemo(() => new TaskService(store), [store]);
   const columnService = useMemo(() => new ColumnService(store), [store]);
+
+  useEffect(() => {
+    return setupDnDMonitor(taskService, columnService);
+  }, [taskService, columnService]);
 
   return (
     <BoardContext

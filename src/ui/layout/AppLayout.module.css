@@ -1,0 +1,6 @@
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f4f5f7;
+}
