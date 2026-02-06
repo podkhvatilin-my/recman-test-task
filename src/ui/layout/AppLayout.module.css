@@ -2,5 +2,5 @@
     display: flex;
     flex-direction: column;
     height: 100dvh;
-    background: #f4f5f7;
+    background: var(--color-bg-primary);
 }

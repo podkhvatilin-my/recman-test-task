@@ -1,7 +1,7 @@
 .board {
     display: flex;
-    gap: 12px;
-    padding: 16px;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
     overflow-x: auto;
     overflow-y: hidden;
     flex: 1;
@@ -11,13 +11,14 @@
     display: none;
 }
 
-@media (max-width: 639px) {
+/* Mobile: Below MD breakpoint (< 768px) */
+@media (max-width: 767px) {
     .board {
         display: none;
     }
     .boardMobile {
         display: block;
-        padding: 16px;
+        padding: var(--spacing-xl);
         overflow-y: auto;
         flex: 1;
     }
