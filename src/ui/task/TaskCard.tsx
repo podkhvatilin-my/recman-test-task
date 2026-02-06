@@ -5,9 +5,9 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import clsx from "clsx";
 import { DnDItemType } from "../../infrastructure/dnd";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useSearch } from "../../application/hooks/useSearch";
-import { useSelection } from "../../application/hooks/useSelection";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useSearchContext } from "../../application/context/SearchContext";
+import { useSelectionContext } from "../../application/context/SelectionContext";
 import { highlightMatch } from "../utils/highlightMatch";
 import { TaskEditDialog } from "./TaskEditDialog";
 import styles from "./TaskCard.module.css";
@@ -19,9 +19,9 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ taskId, columnId, index }: TaskCardProps) {
-  const { board, taskService } = useBoard();
-  const { deferredQuery } = useSearch();
-  const { isSelected, toggle, count } = useSelection();
+  const { board, taskService } = useBoardContext();
+  const { deferredQuery } = useSearchContext();
+  const { isSelected, toggle, count } = useSelectionContext();
 
   const draggableRef = useRef<HTMLDivElement>(null);
 

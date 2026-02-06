@@ -1,5 +1,5 @@
 import { type SubmitEvent, useState } from "react";
-import { useBoard } from "../../application/hooks/useBoard";
+import { useBoardContext } from "../../application/context/BoardContext";
 import styles from "./Column.module.css";
 
 interface AddTaskFormProps {
@@ -7,7 +7,7 @@ interface AddTaskFormProps {
 }
 
 export function AddTaskForm({ columnId }: AddTaskFormProps) {
-  const { taskService } = useBoard();
+  const { taskService } = useBoardContext();
 
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState("");

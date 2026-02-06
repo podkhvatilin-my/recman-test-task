@@ -1,12 +1,12 @@
 import { type SubmitEvent, useRef, useState } from "react";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useSelection } from "../../application/hooks/useSelection";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useSelectionContext } from "../../application/context/SelectionContext";
 import { TaskStatus } from "../../model/task";
 import styles from "./BulkActionBar.module.css";
 
 export function BulkActionBar() {
-  const { board, taskService } = useBoard();
-  const { selectedIds, clear, count } = useSelection();
+  const { board, taskService } = useBoardContext();
+  const { selectedIds, clear, count } = useSelectionContext();
 
   const moveDialogRef = useRef<HTMLDialogElement>(null);
 

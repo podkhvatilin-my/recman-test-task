@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useActiveColumn } from "../../application/hooks/useActiveColumn";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useActiveColumnContext } from "../../application/context/ActiveColumnContext";
 import { Column } from "../column/Column";
 import styles from "./Board.module.css";
 
 export function Board() {
-  const { board } = useBoard();
-  const { activeColumnId } = useActiveColumn();
+  const { board } = useBoardContext();
+  const { activeColumnId } = useActiveColumnContext();
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

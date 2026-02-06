@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useSearch } from "../../application/hooks/useSearch";
-import { useFilter } from "../../application/hooks/useFilter";
-import { useActiveColumn } from "../../application/hooks/useActiveColumn";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useSearchContext } from "../../application/context/SearchContext";
+import { useFilterContext } from "../../application/context/FilterContext";
+import { useActiveColumnContext } from "../../application/context/ActiveColumnContext";
 import type { FilterValue } from "../../application/context/FilterContext";
 import { ColumnNameDialog } from "../column/ColumnNameDialog";
 import styles from "./Toolbar.module.css";
@@ -14,10 +14,10 @@ const FILTERS: { value: FilterValue; label: string }[] = [
 ];
 
 export function Toolbar() {
-  const { board, columnService } = useBoard();
-  const { query, setQuery } = useSearch();
-  const { filter, setFilter } = useFilter();
-  const { activeColumnId, setActiveColumnId } = useActiveColumn();
+  const { board, columnService } = useBoardContext();
+  const { query, setQuery } = useSearchContext();
+  const { filter, setFilter } = useFilterContext();
+  const { activeColumnId, setActiveColumnId } = useActiveColumnContext();
 
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 

@@ -1,5 +1,5 @@
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
-import { useBoard } from "../../application/hooks/useBoard";
+import { useBoardContext } from "../../application/context/BoardContext";
 import { TaskStatus } from "../../model/task";
 import styles from "./TaskCard.module.css";
 
@@ -16,7 +16,7 @@ export function TaskEditDialog({
   open,
   onClose,
 }: TaskEditDialogProps) {
-  const { board, taskService } = useBoard();
+  const { board, taskService } = useBoardContext();
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 

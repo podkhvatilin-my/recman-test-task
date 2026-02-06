@@ -5,8 +5,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useSelection } from "../../application/hooks/useSelection";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useSelectionContext } from "../../application/context/SelectionContext";
 import { ColumnNameDialog } from "./ColumnNameDialog";
 import styles from "./Column.module.css";
 
@@ -16,8 +16,8 @@ interface ColumnHeaderProps {
 }
 
 export function ColumnHeader({ columnId, dragHandleRef }: ColumnHeaderProps) {
-  const { board, columnService } = useBoard();
-  const { selectAll } = useSelection();
+  const { board, columnService } = useBoardContext();
+  const { selectAll } = useSelectionContext();
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
 

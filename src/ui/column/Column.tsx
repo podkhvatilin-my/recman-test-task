@@ -6,9 +6,9 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import clsx from "clsx";
 import { DnDItemType } from "../../infrastructure/dnd";
-import { useBoard } from "../../application/hooks/useBoard";
-import { useSearch } from "../../application/hooks/useSearch";
-import { useFilter } from "../../application/hooks/useFilter";
+import { useBoardContext } from "../../application/context/BoardContext";
+import { useSearchContext } from "../../application/context/SearchContext";
+import { useFilterContext } from "../../application/context/FilterContext";
 import { TaskCard } from "../task/TaskCard";
 import { ColumnHeader } from "./ColumnHeader";
 import { AddTaskForm } from "./AddTaskForm";
@@ -21,9 +21,9 @@ interface ColumnProps {
 }
 
 export function Column({ columnId, columnIndex, isMobile }: ColumnProps) {
-  const { board, searchService, filterService } = useBoard();
-  const { deferredQuery } = useSearch();
-  const { filter } = useFilter();
+  const { board, searchService, filterService } = useBoardContext();
+  const { deferredQuery } = useSearchContext();
+  const { filter } = useFilterContext();
 
   const taskScrollRef = useRef<HTMLDivElement>(null);
   const columnRef = useRef<HTMLDivElement>(null);
