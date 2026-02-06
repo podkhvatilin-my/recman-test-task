@@ -7,7 +7,6 @@ import { FilterContext } from "../application/context/FilterContext/context";
 import { SelectionContext } from "../application/context/SelectionContext/context";
 import { ActiveColumnContext } from "../application/context/ActiveColumnContext/context";
 import type { Board } from "../model/board";
-import type { Column } from "../model/column";
 import { TaskStatus } from "../model/task";
 
 // --- Factories ---

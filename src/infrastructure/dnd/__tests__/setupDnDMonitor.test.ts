@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { DnDItemType } from "../DnDItemType";
 
+type OnDropFn = (args: { source: { data: Record<string, unknown> }; location: { current: { dropTargets: Array<{ data: Record<string, unknown> }> } } }) => void;
+
 vi.mock("@atlaskit/pragmatic-drag-and-drop/element/adapter", () => ({
   monitorForElements: vi.fn((opts) => {
     // Store the onDrop handler so tests can invoke it
-    (monitorForElements as ReturnType<typeof vi.fn>).__onDrop = opts.onDrop;
+    (monitorForElements as any).__onDrop = opts.onDrop;
     return vi.fn(); // cleanup function
   }),
 }));
@@ -14,8 +16,8 @@ import { setupDnDMonitor } from "../setupDnDMonitor";
 import type { TaskService } from "../../../application/services/TaskService";
 import type { ColumnService } from "../../../application/services/ColumnService";
 
-function getOnDrop(): (args: { source: { data: Record<string, unknown> }; location: { current: { dropTargets: Array<{ data: Record<string, unknown> }> } } }) => void {
-  return (monitorForElements as ReturnType<typeof vi.fn>).__onDrop;
+function getOnDrop(): OnDropFn {
+  return (monitorForElements as any).__onDrop;
 }
 
 describe("setupDnDMonitor", () => {
