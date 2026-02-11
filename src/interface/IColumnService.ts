@@ -1,6 +1,6 @@
-export abstract class IColumnService {
-  abstract addColumn(title: string): void;
-  abstract removeColumn(columnId: string): void;
-  abstract renameColumn(columnId: string, title: string): void;
-  abstract moveColumn(columnId: string, toIndex: number): void;
+export interface IColumnService {
+  addColumn(title: string): void;
+  removeColumn(columnId: string): void;
+  renameColumn(columnId: string, title: string): void;
+  moveColumn(columnId: string, toIndex: number): void;
 }

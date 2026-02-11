@@ -1,19 +1,17 @@
-import { type IBoardStore } from "../../interface/IBoardStore";
-import {
-  type FilterValue,
+import type { IBoardStore } from "../../interface/IBoardStore";
+import type {
+  FilterValue,
   IFilterService,
 } from "../../interface/IFilterService";
 
-export class FilterService extends IFilterService {
+export class FilterService implements IFilterService {
   private readonly boardStore: IBoardStore;
 
   constructor(boardStore: IBoardStore) {
-    super();
-
     this.boardStore = boardStore;
   }
 
-  override filter(taskIds: string[], status: FilterValue): string[] {
+  filter(taskIds: string[], status: FilterValue): string[] {
     if (status === "all") return taskIds;
 
     const board = this.boardStore.getBoard();

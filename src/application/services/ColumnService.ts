@@ -1,12 +1,10 @@
-import { IColumnService } from "../../interface/IColumnService";
-import { type IBoardStore } from "../../interface/IBoardStore";
+import type { IColumnService } from "../../interface/IColumnService";
+import type { IBoardStore } from "../../interface/IBoardStore";
 
-export class ColumnService extends IColumnService {
+export class ColumnService implements IColumnService {
   private readonly boardStore: IBoardStore;
 
   constructor(boardStore: IBoardStore) {
-    super();
-
     this.boardStore = boardStore;
   }
 

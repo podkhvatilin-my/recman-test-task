@@ -1,10 +1,10 @@
-import { IBoardRepository } from "../../interface/IBoardRepository";
-import { type Board } from "../../model/board";
+import type { IBoardRepository } from "../../interface/IBoardRepository";
+import type { Board } from "../../model/board";
 
-export class BoardRepository extends IBoardRepository {
+export class BoardRepository implements IBoardRepository {
   private readonly STORAGE_KEY = "recman-board";
 
-  override load(): Board {
+  load(): Board {
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
 
@@ -26,7 +26,7 @@ export class BoardRepository extends IBoardRepository {
     }
   }
 
-  override save(board: Board): void {
+  save(board: Board): void {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(board));
     } catch (error) {

@@ -1,16 +1,14 @@
-import { type Board } from "../../model/board";
-import { type IBoardRepository } from "../../interface/IBoardRepository";
-import { type Listener, IBoardStore } from "../../interface/IBoardStore";
+import type { Board } from "../../model/board";
+import type { IBoardRepository } from "../../interface/IBoardRepository";
+import type { Listener, IBoardStore } from "../../interface/IBoardStore";
 
-export class BoardStore extends IBoardStore {
+export class BoardStore implements IBoardStore {
   private readonly boardRepository: IBoardRepository;
 
   private board: Board;
   private listeners = new Set<Listener>();
 
   constructor(boardRepository: IBoardRepository) {
-    super();
-
     this.boardRepository = boardRepository;
     this.board = boardRepository.load();
   }

@@ -1,17 +1,15 @@
-import { type IBoardStore } from "../../interface/IBoardStore";
-import { ITaskService } from "../../interface/ITaskService";
+import type { IBoardStore } from "../../interface/IBoardStore";
+import type { ITaskService } from "../../interface/ITaskService";
 import { TaskStatus, type Task } from "../../model/task";
 
-export class TaskService extends ITaskService {
+export class TaskService implements ITaskService {
   private readonly boardStore: IBoardStore;
 
   constructor(boardStore: IBoardStore) {
-    super();
-
     this.boardStore = boardStore;
   }
 
-  override addTask(columnId: string, text: string): void {
+  addTask(columnId: string, text: string): void {
     const board = structuredClone(this.boardStore.getBoard());
     const column = board.columns.find((c) => c.id === columnId);
 
@@ -30,7 +28,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override removeTask(taskId: string): void {
+  removeTask(taskId: string): void {
     const board = structuredClone(this.boardStore.getBoard());
 
     if (!board.tasks[taskId])
@@ -45,7 +43,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override updateTask(taskId: string, text: string): void {
+  updateTask(taskId: string, text: string): void {
     const board = structuredClone(this.boardStore.getBoard());
     const task = board.tasks[taskId];
 
@@ -56,7 +54,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override toggleStatus(taskId: string): void {
+  toggleStatus(taskId: string): void {
     const board = structuredClone(this.boardStore.getBoard());
     const task = board.tasks[taskId];
 
@@ -70,7 +68,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override moveTask(taskId: string, toColumnId: string, index?: number): void {
+  moveTask(taskId: string, toColumnId: string, index?: number): void {
     const board = structuredClone(this.boardStore.getBoard());
 
     if (!board.tasks[taskId])
@@ -99,7 +97,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override bulkDelete(taskIds: string[]): void {
+  bulkDelete(taskIds: string[]): void {
     const board = structuredClone(this.boardStore.getBoard());
     const idSet = new Set(taskIds);
 
@@ -114,7 +112,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override bulkSetStatus(taskIds: string[], status: TaskStatus): void {
+  bulkSetStatus(taskIds: string[], status: TaskStatus): void {
     const board = structuredClone(this.boardStore.getBoard());
 
     for (const id of taskIds) {
@@ -126,7 +124,7 @@ export class TaskService extends ITaskService {
     this.boardStore.set(board);
   }
 
-  override bulkMove(taskIds: string[], toColumnId: string): void {
+  bulkMove(taskIds: string[], toColumnId: string): void {
     const board = structuredClone(this.boardStore.getBoard());
     const targetCol = board.columns.find((c) => c.id === toColumnId);
 

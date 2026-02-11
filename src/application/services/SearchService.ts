@@ -1,16 +1,14 @@
-import { type IBoardStore } from "../../interface/IBoardStore";
-import { ISearchService } from "../../interface/ISearchService";
+import type { IBoardStore } from "../../interface/IBoardStore";
+import type { ISearchService } from "../../interface/ISearchService";
 
-export class SearchService extends ISearchService {
+export class SearchService implements ISearchService {
   private readonly boardStore: IBoardStore;
 
   constructor(boardStore: IBoardStore) {
-    super();
-
     this.boardStore = boardStore;
   }
 
-  override search(taskIds: string[], query: string): string[] {
+  search(taskIds: string[], query: string): string[] {
     const trimmed = query.trim();
 
     if (!trimmed) return taskIds;
